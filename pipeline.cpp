@@ -35,7 +35,7 @@ void pipeline::init()
 		if(!(iss >> instr >> second))	// branch
 		{
 			instr = instr.substr(0, instr.length()-1);
-			labels[instr] = line_num+1;
+			labels[instr] = line_num;
 			// record branch here
 			continue;
 		}
@@ -43,7 +43,6 @@ void pipeline::init()
 		int i = 0;
 		int pos = 0;
 		std::string token;
-		std::string comma = ",";
 		while((pos = second.find(",")) != std::string::npos)
 		{
 			token = second.substr(0, pos);
