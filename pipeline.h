@@ -16,6 +16,8 @@ class pipeline
 	public:
 		pipeline(bool f, char* filename);
 		
+		instruction parse_instruction(std::string instr, std::string p0, std::string p1, std::string p2);
+		
 		void init();
 		void loop();
 		void print_instructs();
@@ -30,7 +32,7 @@ class pipeline
 		int s[8];
 		int t[10];
 		
-		std::vector<instruction> instructs;
+		std::vector<instruction> instructions;
 		std::map<std::string, int> labels;
 };
 
