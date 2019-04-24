@@ -58,7 +58,6 @@ void pipeline::init()
 		lines.push_back(line);
 		line_num++;
 	}
-	
 	loop();
 }
 
@@ -74,6 +73,8 @@ void pipeline::loop()
 		//	break;
 		
 		// do updates here
+		for(int i=0;i<instructions.size();i++)
+			instructions[i].update();
 		
 		//std::cout << std::endl << "----------------------------------------------------------------------------------" << std::endl;
 		//std::cout << "CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16" << std::endl;
@@ -119,7 +120,7 @@ instruction pipeline::parse_instruction(std::string instr, std::string p0, std::
 	
 	if(p2.substr(0, 1) >= "a" && p2.substr(0, 1) <= "z")
 	{
-		return instruction("beq", dest, r0, p2);
+		return instruction(instr, dest, r0, p2);
 	}
 	else if(p2.substr(0, 1) == "$")
 	{
@@ -189,5 +190,6 @@ void pipeline::stop()
 {
 	std::cout << std::endl << "----------------------------------------------------------------------------------" << std::endl;
 	std::cout << "END OF SIMULATION" << std::endl;
+	// std::cout << s[1] << std::endl;
 	exit(0);
 }

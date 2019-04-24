@@ -62,8 +62,11 @@ void instruction::write_back()
 	int n1, n2;
 	if(branch == "")	// not "beq" operator
 	{
-		int res;
-		int n1 = *reg0;
+		int res, n1;
+		if(reg0 == NULL)
+			n1 = 0;
+		else
+			n1 = *reg0;
 		if(op.substr(op.length()-1, 1) == "i")
 			n2 = k;
 		else
