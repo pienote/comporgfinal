@@ -13,11 +13,24 @@ instruction::instruction(std::string instr, int* d, int* r0, int* r1)
 	reg0 = r0;
 	reg1 = r1;
 	k = -1;
+	offset = 0;
 	
 	stage = 0;
 	stall = false;
 	branch = "";
+	set_up_columns();
 }
+
+int* instruction::get_reg0()
+{
+	return reg0;
+}
+
+int* instruction::get_reg1()
+{
+	return reg1;
+}
+
 
 instruction::instruction(std::string instr, int* d, int* r0, int inter)
 {
@@ -27,10 +40,12 @@ instruction::instruction(std::string instr, int* d, int* r0, int inter)
 	reg0 = r0;
 	reg1 = NULL;
 	k = inter;
+	offset = 0;
 	
 	stage = 0;
 	stall = false;
 	branch = "";
+	set_up_columns();
 }
 
 instruction::instruction(std::string instr, int* r0, int* r1, std::string name)
@@ -41,20 +56,28 @@ instruction::instruction(std::string instr, int* r0, int* r1, std::string name)
 	reg0 = r0;
 	reg1 = r1;
 	k = -1;
+	offset = 0;
 	
 	stage = 0;
 	stall = false;
 	branch = name;
+	set_up_columns();
 }
 
-void instruction::update()
+void instruction::set_up_columns()
 {
+	for(int i=0;i<16;i++)
+		cols[i] = ".\t";
+}
+
+void instruction::update(int cc)
+{
+	if(stage == 0)
+		offset = cc;
 	if(!stall && !is_done())
 		stage++;
 	if(is_done())
-	{
 		write_back();
-	}
 }
 
 void instruction::write_back()
@@ -89,5 +112,10 @@ void instruction::write_back()
 
 bool instruction::is_done()
 {
-	return (stage > 5);
+	return (stage >= 5);
+}
+
+void instruction::print(std::string line, int curr)
+{
+	
 }

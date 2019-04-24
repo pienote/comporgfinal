@@ -8,7 +8,7 @@ pipeline::pipeline(bool f, char* filename)
 
 void pipeline::init()
 {
-	counter = 0;	// what instruction are we on (line number)
+	counter = 1;	// what instruction are we on (line number)
 	
 	if(forward)
 		std::cout << "START OF SIMULATION (forwarding)";
@@ -63,7 +63,7 @@ void pipeline::init()
 
 void pipeline::loop()
 {
-	for(int i=0;i<16;i++)
+	for(cc=0;cc<16;cc++)
 	{
 		bool done = true;
 		for(int j=0;j<instructions.size();j++)
@@ -73,8 +73,8 @@ void pipeline::loop()
 			break;
 		
 		// do updates here
-		for(int i=0;i<instructions.size();i++)
-			instructions[i].update();
+		for(int i=0;i<instructions.size()&&i<counter;i++)
+			instructions[i].update(cc);
 		
 		std::cout << std::endl << "----------------------------------------------------------------------------------" << std::endl;
 		std::cout << "CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16" << std::endl;
@@ -82,9 +82,51 @@ void pipeline::loop()
 		print_regs();
 		
 		// advance cycle and counter (if needed)
-		
+		if(counter < lines.size())
+			counter++;
 	}
 	stop();
+}
+
+void pipeline::print_instructs()
+{
+	for(int i=0;i<counter;i++)
+	{
+		instructions[i].print(lines[i], cc);
+	}
+}
+
+void pipeline::print_regs()
+{
+	// print s registers
+	std::cout << std::left << std::setw(6) << "$s0 = " << std::setw(14) << s[0];
+	std::cout << std::left << std::setw(6) << "$s1 = " << std::setw(14) << s[1];
+	std::cout << std::left << std::setw(6) << "$s2 = " << std::setw(14) << s[2];
+	std::cout << std::left << std::setw(6) << "$s3 = " << std::setw(14) << s[3] << std::endl;
+	std::cout << std::left << std::setw(6) << "$s4 = " << std::setw(14) << s[4];
+	std::cout << std::left << std::setw(6) << "$s5 = " << std::setw(14) << s[5];
+	std::cout << std::left << std::setw(6) << "$s6 = " << std::setw(14) << s[6];
+	std::cout << std::left << std::setw(6) << "$s7 = " << std::setw(14) << s[7] << std::endl;
+	
+	//print t registers
+	std::cout << std::left << std::setw(6) << "$t0 = " << std::setw(14) << t[0];
+	std::cout << std::left << std::setw(6) << "$t1 = " << std::setw(14) << t[1];
+	std::cout << std::left << std::setw(6) << "$t2 = " << std::setw(14) << t[2];
+	std::cout << std::left << std::setw(6) << "$t3 = " << std::setw(14) << t[3] << std::endl;
+	std::cout << std::left << std::setw(6) << "$t4 = " << std::setw(14) << t[4];
+	std::cout << std::left << std::setw(6) << "$t5 = " << std::setw(14) << t[5];
+	std::cout << std::left << std::setw(6) << "$t6 = " << std::setw(14) << t[6];
+	std::cout << std::left << std::setw(6) << "$t7 = " << std::setw(14) << t[7] << std::endl;
+	std::cout << std::left << std::setw(6) << "$t8 = " << std::setw(14) << t[8];
+	std::cout << std::left << std::setw(6) << "$t9 = " << std::setw(14) << t[9];
+}
+
+void pipeline::stop()
+{
+	std::cout << std::endl << "----------------------------------------------------------------------------------" << std::endl;
+	std::cout << "END OF SIMULATION" << std::endl;
+	// std::cout << s[1] << std::endl;
+	exit(0);
 }
 
 instruction pipeline::parse_instruction(std::string instr, std::string p0, std::string p1, std::string p2)
@@ -152,45 +194,4 @@ instruction pipeline::parse_instruction(std::string instr, std::string p0, std::
 		return instruction(instr, dest, r0, r1);
 	if(r1 == NULL && k != -1)
 		return instruction(instr, dest, r0, k);
-}
-
-void pipeline::print_instructs()
-{
-	for(int i=0;i<counter;i++)
-	{
-		// instructs[i].print();
-	}
-}
-
-void pipeline::print_regs()
-{
-	// print s registers
-	std::cout << "$s0 = " << s[0] << "\t\t\t";
-	std::cout << "$s1 = " << s[1] << "\t\t\t";
-	std::cout << "$s2 = " << s[2] << "\t\t\t";
-	std::cout << "$s3 = " << s[3] << std::endl;
-	std::cout << "$s4 = " << s[4] << "\t\t\t";
-	std::cout << "$s5 = " << s[5] << "\t\t\t";
-	std::cout << "$s6 = " << s[6] << "\t\t\t";
-	std::cout << "$s7 = " << s[7] << std::endl;
-	
-	//print t registers
-	std::cout << "$t0 = " << t[0] << "\t\t\t";
-	std::cout << "$t1 = " << t[1] << "\t\t\t";
-	std::cout << "$t2 = " << t[2] << "\t\t\t";
-	std::cout << "$t3 = " << t[3] << std::endl;
-	std::cout << "$t4 = " << t[4] << "\t\t\t";
-	std::cout << "$t5 = " << t[5] << "\t\t\t";
-	std::cout << "$t6 = " << t[6] << "\t\t\t";
-	std::cout << "$t7 = " << t[7] << std::endl;
-	std::cout << "$t8 = " << t[8] << "\t\t\t";
-	std::cout << "$t9 = " << t[9];
-}
-
-void pipeline::stop()
-{
-	std::cout << std::endl << "----------------------------------------------------------------------------------" << std::endl;
-	std::cout << "END OF SIMULATION" << std::endl;
-	// std::cout << s[1] << std::endl;
-	exit(0);
 }

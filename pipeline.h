@@ -4,10 +4,12 @@
 #include "instruction.h"
 
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <sstream>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <vector>
 
