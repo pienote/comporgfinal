@@ -6,6 +6,74 @@ pipeline::pipeline(bool f, char* filename)
 	in = std::ifstream(filename);
 }
 
+instruction pipeline::parse_instruction(std::string instr, std::string p0, std::string p1, std::string p2)
+{
+	int* dest = NULL;
+	int* r0 = NULL;
+	int* r1 = NULL;
+	int k = -1;
+	
+	if(p0.substr(1, 1) == "s")
+	{
+		dest = &s[std::stoi(p0.substr(2, 1))];
+	}
+	if(p0.substr(1, 1) == "t")
+	{
+		dest = &t[std::stoi(p0.substr(2, 1))];
+	}
+	
+	if(p1.substr(0, 1) == "$")
+	{
+		if(p1 == "$zero")
+		{
+			k = 0;	//intermediate = 0;
+		}
+		if(p1.substr(1, 1) == "s")
+		{
+			r0 = &s[std::stoi(p1.substr(2, 1))];	// set pointer to r0
+		}
+		if(p1.substr(1, 1) == "t")
+		{
+			r0 = &t[std::stoi(p1.substr(2, 1))];	// set pointer to r1
+		}
+	}
+	
+	if(p2.substr(0, 1) >= "a" && p2.substr(0, 1) <= "z")
+	{
+		return instruction("beq", dest, r0, p2);
+	}
+	else if(p2.substr(0, 1) == "$")
+	{
+		if(p2 == "$zero")
+		{
+			k = 0;	// intermediate = 0;
+		}
+		if(p2.substr(1, 1) == "s")
+		{
+			if(k != -1)
+				r0 = &s[std::stoi(p2.substr(2, 1))];	// yes intermediate
+			else
+				r1 = &s[std::stoi(p2.substr(2, 1))];
+		}
+		if(p2.substr(1, 1) == "t")
+		{
+			if(k != -1)
+				r0 = &t[std::stoi(p2.substr(2, 1))];
+			else
+				r1 = &t[std::stoi(p2.substr(2, 1))];
+		}
+	}
+	if(p2.substr(0, 1) >= "0" && p2.substr(0, 1) <= "9")
+	{
+		k = std::stoi(p2);
+	}
+	if(k == -1)
+		return instruction(instr, dest, r0, r1);
+	if(r1 == NULL && k != -1)
+		return instruction(instr, dest, r0, k);
+}
+	
+
 void pipeline::init()
 {
 	counter = 0;	// what instruction are we on (line number)
@@ -29,11 +97,7 @@ void pipeline::init()
 	std::string line;
 	std::string instr;
 	std::string second;
-	
-	int* dest = NULL;
-	int* r0 = NULL;
-	int* r1 = NULL;
-	int k = -1;
+
 	int line_num = 0;
 	
 	while(std::getline(in, line))
@@ -61,70 +125,7 @@ void pipeline::init()
 		parts[i] = second;
 		//for(i=0;i<3;i++)
 		//	std::cout << parts[i] << std::endl;
-		
-		if(parts[0].substr(1, 1) == "s")
-		{
-			dest = &s[std::stoi(parts[0].substr(2, 1))];
-		}
-		if(parts[0].substr(1, 1) == "t")
-		{
-			dest = &t[std::stoi(parts[0].substr(2, 1))];
-		}
-		
-		if(parts[1].substr(0, 1) == "$")
-		{
-			if(parts[1] == "$zero")
-			{
-				k = 0;	//intermediate = 0;
-			}
-			if(parts[1].substr(1, 1) == "s")
-			{
-				r0 = &s[std::stoi(parts[1].substr(2, 1))];	// set pointer to r0
-			}
-			if(parts[1].substr(1, 1) == "t")
-			{
-				r0 = &t[std::stoi(parts[1].substr(2, 1))];	// set pointer to r1
-			}
-		}
-		
-		if(parts[2].substr(0, 1) >= "a" && parts[2].substr(0, 1) <= "z")
-		{
-			instructs.push_back(instruction("beq", dest, r0, parts[2]));
-			continue;
-		}
-		else if(parts[2].substr(0, 1) == "$")
-		{
-			if(parts[2] == "$zero")
-			{
-				k = 0;	// intermediate = 0;
-			}
-			if(parts[2].substr(1, 1) == "s")
-			{
-				if(k != -1)
-					r0 = &s[std::stoi(parts[2].substr(2, 1))];	// yes intermediate
-				else
-					r1 = &s[std::stoi(parts[2].substr(2, 1))];
-			}
-			if(parts[2].substr(1, 1) == "t")
-			{
-				if(k != -1)
-					r0 = &t[std::stoi(parts[2].substr(2, 1))];
-				else
-					r1 = &t[std::stoi(parts[2].substr(2, 1))];
-			}
-		}
-		if(parts[2].substr(0, 1) >= "0" && parts[2].substr(0, 1) <= "9")
-		{
-			k = std::stoi(parts[2]);
-		}
-		if(k == -1)
-			instructs.push_back(instruction(instr, dest, r0, r1));
-		if(r1 == NULL && k != -1)
-			instructs.push_back(instruction(instr, dest, r0, k));
-		dest = NULL;
-		r0 = NULL;
-		r1 = NULL;
-		k = -1;
+		instructions.push_back(parse_instruction(instr, parts[0], parts[1], parts[2]));
 		line_num++;
 	}
 	
