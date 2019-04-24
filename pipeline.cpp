@@ -133,7 +133,6 @@ void pipeline::init()
 
 void pipeline::loop()
 {
-	std::cout << labels["loopy"] << std::endl;
 	for(int i=0;i<16;i++)
 	{
 		//bool done = true;
