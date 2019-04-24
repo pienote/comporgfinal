@@ -144,6 +144,8 @@ void pipeline::loop()
 		//if(done)
 		//	break;
 		
+		// do updates here
+		
 		//std::cout << std::endl << "----------------------------------------------------------------------------------" << std::endl;
 		//std::cout << "CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16" << std::endl;
 		//print_instructs();
