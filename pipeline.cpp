@@ -6,6 +6,85 @@ pipeline::pipeline(bool f, char* filename)
 	in = std::ifstream(filename);
 }
 
+void pipeline::init()
+{
+	counter = 0;	// what instruction are we on (line number)
+	
+	if(forward)
+		std::cout << "START OF SIMULATION (forwarding)";
+	else
+		std::cout << "START OF SIMULATION (no forwarding)";
+	
+	cc = 0;
+	
+	for(int i=0;i<8;i++)
+		s[i] = 0;
+	
+	for(int i=0;i<10;i++)
+		t[i] = 0;
+	
+	std::string line;
+	std::string instr;
+	std::string second;
+
+	int line_num = 0;
+	
+	while(std::getline(in, line))
+	{
+		std::istringstream iss(line);
+		if(!(iss >> instr >> second))	// branch
+		{
+			instr = instr.substr(0, instr.length()-1);
+			labels[instr] = line_num+1;
+			// record branch here
+			continue;
+		}
+		std::string parts[3];
+		int i = 0;
+		int pos = 0;
+		std::string token;
+		std::string comma = ",";
+		while((pos = second.find(",")) != std::string::npos)
+		{
+			token = second.substr(0, pos);
+			parts[i] = token;
+			second.erase(0, pos+1);
+			i++;
+		}
+		parts[i] = second;
+		//for(i=0;i<3;i++)
+		//	std::cout << parts[i] << std::endl;
+		instructions.push_back(parse_instruction(instr, parts[0], parts[1], parts[2]));
+		lines.push_back(line);
+		line_num++;
+	}
+	
+	loop();
+}
+
+void pipeline::loop()
+{
+	for(int i=0;i<16;i++)
+	{
+		//bool done = true;
+		//for(int j=0;j<instructs.size();j++)
+		//	if(!instructs[j].is_done())
+		//		done = false;
+		//if(done)
+		//	break;
+		
+		// do updates here
+		
+		//std::cout << std::endl << "----------------------------------------------------------------------------------" << std::endl;
+		//std::cout << "CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16" << std::endl;
+		//print_instructs();
+		//print_regs();
+		// advance cycle and counter (if needed)
+		
+	}
+	stop();
+}
+
 instruction pipeline::parse_instruction(std::string instr, std::string p0, std::string p1, std::string p2)
 {
 	int* dest = NULL;
@@ -71,89 +150,6 @@ instruction pipeline::parse_instruction(std::string instr, std::string p0, std::
 		return instruction(instr, dest, r0, r1);
 	if(r1 == NULL && k != -1)
 		return instruction(instr, dest, r0, k);
-}
-	
-
-void pipeline::init()
-{
-	counter = 0;	// what instruction are we on (line number)
-	
-	if(forward)
-		std::cout << "START OF SIMULATION (forwarding)";
-	else
-		std::cout << "START OF SIMULATION (no forwarding)";
-	
-	cc = 0;
-	
-	for(int i=0;i<8;i++)
-	{
-		s[i] = 0;
-	}
-	
-	for(int i=0;i<10;i++)
-	{
-		t[i] = 0;
-	}
-	std::string line;
-	std::string instr;
-	std::string second;
-
-	int line_num = 0;
-	
-	while(std::getline(in, line))
-	{
-		std::istringstream iss(line);
-		if(!(iss >> instr >> second))	// branch
-		{
-			instr = instr.substr(0, instr.length()-1);
-			labels[instr] = line_num+1;
-			// record branch here
-			continue;
-		}
-		std::string parts[3];
-		int i = 0;
-		int pos = 0;
-		std::string token;
-		std::string comma = ",";
-		while((pos = second.find(",")) != std::string::npos)
-		{
-			token = second.substr(0, pos);
-			parts[i] = token;
-			second.erase(0, pos+1);
-			i++;
-		}
-		parts[i] = second;
-		//for(i=0;i<3;i++)
-		//	std::cout << parts[i] << std::endl;
-		instructions.push_back(parse_instruction(instr, parts[0], parts[1], parts[2]));
-		lines[line_num] = line;
-		line_num++;
-	}
-	
-	loop();
-}
-
-void pipeline::loop()
-{
-	for(int i=0;i<16;i++)
-	{
-		//bool done = true;
-		//for(int j=0;j<instructs.size();j++)
-		//	if(!instructs[j].is_done())
-		//		done = false;
-		//if(done)
-		//	break;
-		
-		// do updates here
-		
-		//std::cout << std::endl << "----------------------------------------------------------------------------------" << std::endl;
-		//std::cout << "CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16" << std::endl;
-		//print_instructs();
-		//print_regs();
-		// advance cycle and counter (if needed)
-		
-	}
-	stop();
 }
 
 void pipeline::print_instructs()

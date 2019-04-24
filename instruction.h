@@ -14,18 +14,18 @@ class instruction
 		instruction(std::string instr, int* r0, int* r1, std::string name);
 		
 		void update();
-		void is_done();
+		void write_back();
+		bool is_done();
 		
 		
 	private:
-		bool i;
 		bool label;
 		bool stall;
 		
 		std::string op;
 		std::string branch;
 		
-		int stage;
+		int stage;	// 0 <- not initiated, 1 <- IF, 2 <- ID, ...
 		int* dest;
 		int* reg0;
 		int* reg1;

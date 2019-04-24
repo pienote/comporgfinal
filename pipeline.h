@@ -16,10 +16,9 @@ class pipeline
 	public:
 		pipeline(bool f, char* filename);
 		
-		instruction parse_instruction(std::string instr, std::string p0, std::string p1, std::string p2);
-		
 		void init();
 		void loop();
+		instruction parse_instruction(std::string instr, std::string p0, std::string p1, std::string p2);
 		void print_instructs();
 		void print_regs();
 		void stop();
