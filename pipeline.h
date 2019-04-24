@@ -32,6 +32,7 @@ class pipeline
 		int s[8];
 		int t[10];
 		
+		std::vector<std::string> lines;
 		std::vector<instruction> instructions;
 		std::map<std::string, int> labels;
 };

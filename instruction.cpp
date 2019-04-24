@@ -7,7 +7,7 @@ instruction::instruction()
 
 instruction::instruction(std::string instr, int* d, int* r0, int* r1)
 {
-	//std::cout << "a" << std::endl;
+	std::cout << "a" << std::endl;
 	op = instr;
 	dest = d;
 	reg0 = r0;
@@ -23,7 +23,7 @@ instruction::instruction(std::string instr, int* d, int* r0, int* r1)
 
 instruction::instruction(std::string instr, int* d, int* r0, int inter)
 {
-	//std::cout << "b" << std::endl;
+	std::cout << "b" << std::endl;
 	op = instr;
 	dest = d;
 	reg0 = r0;
@@ -39,7 +39,7 @@ instruction::instruction(std::string instr, int* d, int* r0, int inter)
 
 instruction::instruction(std::string instr, int* r0, int* r1, std::string name)
 {
-	//std::cout << "c" << std::endl;
+	std::cout << "c" << std::endl;
 	op = instr;
 	dest = NULL;
 	reg0 = r0;
@@ -51,4 +51,14 @@ instruction::instruction(std::string instr, int* r0, int* r1, std::string name)
 	stall = false;
 	label = true;
 	branch = name;
+}
+
+void instruction::update()
+{
+	
+}
+
+void is_done()
+{
+	
 }

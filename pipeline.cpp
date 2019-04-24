@@ -126,6 +126,7 @@ void pipeline::init()
 		//for(i=0;i<3;i++)
 		//	std::cout << parts[i] << std::endl;
 		instructions.push_back(parse_instruction(instr, parts[0], parts[1], parts[2]));
+		lines[line_num] = line;
 		line_num++;
 	}
 	
