@@ -65,21 +65,22 @@ void pipeline::loop()
 {
 	for(int i=0;i<16;i++)
 	{
-		//bool done = true;
-		//for(int j=0;j<instructs.size();j++)
-		//	if(!instructs[j].is_done())
-		//		done = false;
-		//if(done)
-		//	break;
+		bool done = true;
+		for(int j=0;j<instructions.size();j++)
+			if(!instructions[j].is_done())
+				done = false;
+		if(done)
+			break;
 		
 		// do updates here
 		for(int i=0;i<instructions.size();i++)
 			instructions[i].update();
 		
-		//std::cout << std::endl << "----------------------------------------------------------------------------------" << std::endl;
-		//std::cout << "CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16" << std::endl;
-		//print_instructs();
-		//print_regs();
+		std::cout << std::endl << "----------------------------------------------------------------------------------" << std::endl;
+		std::cout << "CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16" << std::endl;
+		print_instructs();
+		print_regs();
+		
 		// advance cycle and counter (if needed)
 		
 	}
