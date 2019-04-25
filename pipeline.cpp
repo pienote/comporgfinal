@@ -41,21 +41,21 @@ void pipeline::loop()
 	for(cc=0;cc<16;cc++)
 	{
 		bool done = true;
-		for(int i=0;i<instructions.size();i++)
+		for(unsigned int i=0;i<instructions.size();i++)
 			if(!instructions[i].is_done())
 				done = false;
 		if(done)
 			break;
 		
 		// do updates here
-		for(int i=0;i<instructions.size()&&i<counter;i++)
+		for(unsigned int i=0;i<instructions.size()&&i<counter;i++)
 		{
 			instructions[i].update(cc);
 			if(instructions[i].is_branch() && instructions[i].is_done())
 			{
 				if(instructions[i].branch_taken())
 				{
-					for(int j=i+1;j<counter;j++)
+					for(unsigned int j=i+1;j<counter;j++)
 					{
 						instructions[j].freeze();	// make the after instructions '*'
 					}
@@ -63,7 +63,7 @@ void pipeline::loop()
 					int temp = instructions.size();
 					for(int j = labels[instructions[i].get_branch_name()];j<temp;j++)
 					{
-						if(parse_line(lines[j], (j+i)));
+						if(parse_line(lines[j], (j+i)))
 							lines.push_back(lines[j]);
 					}
 					counter++;
@@ -87,7 +87,7 @@ void pipeline::loop()
 
 void pipeline::print_instructs()
 {
-	for(int i=0;i<counter;i++)
+	for(unsigned int i=0;i<counter;i++)
 	{
 		instructions[i].print(lines[i], cc);
 	}
@@ -145,7 +145,7 @@ bool pipeline::parse_line(std::string line, int line_num)
 		return false;
 	}
 	
-	while((pos = second.find(",")) != std::string::npos)
+	while((pos = second.find(",")) != (signed int)std::string::npos)
 	{
 		token = second.substr(0, pos);
 		parts[i] = token;
@@ -228,4 +228,5 @@ instruction pipeline::parse_instruction(std::string instr, std::string p0, std::
 		return instruction(instr, dest, r0, r1);
 	if(r1 == NULL && k != -1)
 		return instruction(instr, dest, r0, k);
+	return instruction();
 }

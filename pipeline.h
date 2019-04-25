@@ -27,7 +27,7 @@ class pipeline
 		void print_regs();
 		void stop();
 	private:
-		int counter;
+		unsigned int counter;
 		int cc;
 		bool forward;
 		std::ifstream in;

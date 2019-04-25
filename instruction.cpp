@@ -130,10 +130,9 @@ void instruction::write_back()
 {
 	if(frozen)
 		return;
-	int n1, n2;
 	if(branch == "")	// not "beq" operator
 	{
-		int res, n1;
+		int res, n1, n2;
 		if(reg0 == NULL)
 			n1 = 0;
 		else
