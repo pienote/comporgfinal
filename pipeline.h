@@ -21,6 +21,7 @@ class pipeline
 		
 		void init();
 		void loop();
+		bool parse_line(std::string line, int line_num);
 		instruction parse_instruction(std::string instr, std::string p0, std::string p1, std::string p2);
 		void print_instructs();
 		void print_regs();

@@ -22,40 +22,16 @@ void pipeline::init()
 	
 	for(int i=0;i<10;i++)
 		t[i] = 0;
-	
-	std::string line;
-	std::string instr;
-	std::string second;
 
 	int line_num = 0;
-	
+	std::string line;
 	while(std::getline(in, line))
 	{
-		std::istringstream iss(line);
-		if(!(iss >> instr >> second))	// branch
+		if(parse_line(line, line_num))
 		{
-			instr = instr.substr(0, instr.length()-1);
-			labels[instr] = line_num;
-			// record branch here
-			continue;
+			lines.push_back(line);
+			line_num++;
 		}
-		std::string parts[3];
-		int i = 0;
-		int pos = 0;
-		std::string token;
-		while((pos = second.find(",")) != std::string::npos)
-		{
-			token = second.substr(0, pos);
-			parts[i] = token;
-			second.erase(0, pos+1);
-			i++;
-		}
-		parts[i] = second;
-		//for(i=0;i<3;i++)
-		//	std::cout << parts[i] << std::endl;
-		instructions.push_back(parse_instruction(instr, parts[0], parts[1], parts[2]));
-		lines.push_back(line);
-		line_num++;
 	}
 	loop();
 }
@@ -79,8 +55,18 @@ void pipeline::loop()
 			{
 				if(instructions[i].branch_taken())
 				{
-					// here to make the after instructions '*'
-					
+					for(int j=i+1;j<counter;j++)
+					{
+						instructions[j].freeze();	// make the after instructions '*'
+					}
+					// add code from label to end
+					int temp = instructions.size();
+					for(int j = labels[instructions[i].get_branch_name()];j<temp;j++)
+					{
+						if(parse_line(lines[j], (j+i)));
+							lines.push_back(lines[j]);
+					}
+					counter++;
 					instructions[i].reset_taken();
 				}
 			}
@@ -138,6 +124,39 @@ void pipeline::stop()
 	std::cout << "END OF SIMULATION" << std::endl;
 	// std::cout << s[1] << std::endl;
 	exit(0);
+}
+
+bool pipeline::parse_line(std::string line, int line_num)
+{
+	std::string instr;
+	std::string second;
+	
+	std::string parts[3];
+	int i = 0;
+	int pos = 0;
+	std::string token;
+	
+	std::istringstream iss(line);
+	if(!(iss >> instr >> second))	// branch
+	{
+		instr = instr.substr(0, instr.length()-1);
+		labels[instr] = line_num;
+		// record branch here
+		return false;
+	}
+	
+	while((pos = second.find(",")) != std::string::npos)
+	{
+		token = second.substr(0, pos);
+		parts[i] = token;
+		second.erase(0, pos+1);
+		i++;
+	}
+	parts[i] = second;
+	//for(i=0;i<3;i++)
+	//	std::cout << parts[i] << std::endl;
+	instructions.push_back(parse_instruction(instr, parts[0], parts[1], parts[2]));
+	return true;
 }
 
 instruction pipeline::parse_instruction(std::string instr, std::string p0, std::string p1, std::string p2)

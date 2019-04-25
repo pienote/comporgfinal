@@ -15,6 +15,7 @@ instruction::instruction(std::string instr, int* d, int* r0, int* r1)
 	k = -1;
 	offset = -1;
 	
+	frozen = false;
 	taken = false;
 	stage = 0;
 	stall = false;
@@ -32,6 +33,7 @@ instruction::instruction(std::string instr, int* d, int* r0, int inter)
 	k = inter;
 	offset = -1;
 	
+	frozen = false;
 	taken = false;
 	stage = 0;
 	stall = false;
@@ -49,6 +51,7 @@ instruction::instruction(std::string instr, int* r0, int* r1, std::string name)
 	k = -1;
 	offset = -1;
 	
+	frozen = false;
 	taken = false;
 	stage = 0;
 	stall = false;
@@ -71,6 +74,16 @@ const int* instruction::get_reg1()
 	return reg1;
 }
 
+const std::string instruction::get_branch_name()
+{
+	return branch;
+}
+
+void instruction::freeze()
+{
+	frozen = true;
+}
+
 void instruction::reset_taken()
 {
 	taken = false;
@@ -90,22 +103,30 @@ void instruction::update(int cc)
 		stage++;
 	if(stage == 5)
 		write_back();
-	
-	if(stage == 1)
-		cols[cc] = "IF";
-	if(stage == 2)
-		cols[cc] = "ID";
-	if(stage == 3)
-		cols[cc] = "MEM";
-	if(stage == 4)
-		cols[cc] = "EX";
-	if(stage == 5)
-		cols[cc] = "WB";
-	
+	if(!frozen)
+	{
+		if(stage == 1)
+			cols[cc] = "IF";
+		if(stage == 2)
+			cols[cc] = "ID";
+		if(stage == 3)
+			cols[cc] = "MEM";
+		if(stage == 4)
+			cols[cc] = "EX";
+		if(stage == 5)
+			cols[cc] = "WB";
+	}
+	else
+	{
+		if(stage <= 5)
+			cols[cc] = "*";
+	}
 }
 
 void instruction::write_back()
 {
+	if(frozen)
+		return;
 	int n1, n2;
 	if(branch == "")	// not "beq" operator
 	{

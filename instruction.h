@@ -18,6 +18,9 @@ class instruction
 		const int* get_reg0();
 		const int* get_reg1();
 		
+		const std::string get_branch_name();
+		
+		void freeze();
 		void reset_taken();
 		void set_up_columns();
 		void update(int cc);
@@ -30,6 +33,7 @@ class instruction
 	private:
 		bool taken;
 		bool stall;
+		bool frozen;
 		
 		std::string op;
 		std::string branch;
