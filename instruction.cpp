@@ -195,7 +195,15 @@ void instruction::print(std::string line, int curr)
 	std::cout << std::left << std::setw(20) << line;
 	for(int i=0;i<16;i++)
 	{
-		std::cout << std::left << std::setw(4) << cols[i];
+		std::cout << std::left;
+		if(i != 15)
+		{
+			std::cout << std::setw(4) << cols[i];
+		}
+		else
+		{
+			std::cout << cols[i];
+		}
 	}
 	std::cout << std::endl;
 }
