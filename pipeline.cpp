@@ -65,8 +65,8 @@ void pipeline::loop()
 	for(cc=0;cc<16;cc++)
 	{
 		bool done = true;
-		for(int j=0;j<instructions.size();j++)
-			if(!instructions[j].is_done())
+		for(int i=0;i<instructions.size();i++)
+			if(!instructions[i].is_done())
 				done = false;
 		if(done)
 			break;
