@@ -14,17 +14,21 @@ class instruction
 		instruction(std::string instr, int* d, int* r0, int inter);
 		instruction(std::string instr, int* r0, int* r1, std::string name);
 		
-		int* get_reg0();
-		int* get_reg1();
+		const int* get_dest();
+		const int* get_reg0();
+		const int* get_reg1();
 		
+		void reset_taken();
 		void set_up_columns();
 		void update(int cc);
 		void write_back();
+		bool branch_taken();
+		bool is_branch();
 		bool is_done();
 		void print(std::string line, int curr);
 		
 	private:
-		bool label;
+		bool taken;
 		bool stall;
 		
 		std::string op;

@@ -15,6 +15,7 @@ instruction::instruction(std::string instr, int* d, int* r0, int* r1)
 	k = -1;
 	offset = -1;
 	
+	taken = false;
 	stage = 0;
 	stall = false;
 	branch = "";
@@ -31,6 +32,7 @@ instruction::instruction(std::string instr, int* d, int* r0, int inter)
 	k = inter;
 	offset = -1;
 	
+	taken = false;
 	stage = 0;
 	stall = false;
 	branch = "";
@@ -47,20 +49,31 @@ instruction::instruction(std::string instr, int* r0, int* r1, std::string name)
 	k = -1;
 	offset = -1;
 	
+	taken = false;
 	stage = 0;
 	stall = false;
 	branch = name;
 	set_up_columns();
 }
 
-int* instruction::get_reg0()
+const int* instruction::get_dest()
+{
+	return dest;
+}
+
+const int* instruction::get_reg0()
 {
 	return reg0;
 }
 
-int* instruction::get_reg1()
+const int* instruction::get_reg1()
 {
 	return reg1;
+}
+
+void instruction::reset_taken()
+{
+	taken = false;
 }
 
 void instruction::set_up_columns()
@@ -117,8 +130,36 @@ void instruction::write_back()
 	}
 	else	// is a beq or bne
 	{
-		
+		int n;
+		if(reg1 == NULL)
+			n = k;
+		else
+			n = *reg1;
+		if(op == "beq")
+		{	
+			if(*reg0 == n)
+				taken = true;
+			else
+				taken = false;
+		}
+		if(op == "bne")
+		{
+			if(*reg0 != n)
+				taken = true;
+			else
+				taken = false;	
+		}
 	}
+}
+
+bool instruction::branch_taken()
+{
+	return taken;
+}
+
+bool instruction::is_branch()
+{
+	return (branch != "");
 }
 
 bool instruction::is_done()

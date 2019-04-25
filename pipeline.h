@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <iostream>
 #include <map>
+#include <set>
 #include <sstream>
 #include <stdlib.h>
 #include <stdio.h>
@@ -36,6 +37,7 @@ class pipeline
 		std::vector<std::string> lines;
 		std::vector<instruction> instructions;
 		std::map<std::string, int> labels;
+		std::set<instruction> stalled;
 };
 
 #endif

@@ -73,11 +73,23 @@ void pipeline::loop()
 		
 		// do updates here
 		for(int i=0;i<instructions.size()&&i<counter;i++)
+		{
 			instructions[i].update(cc);
+			if(instructions[i].is_branch() && instructions[i].is_done())
+			{
+				if(instructions[i].branch_taken())
+				{
+					// here to make the after instructions '*'
+					
+					instructions[i].reset_taken();
+				}
+			}
+		}
 		
 		std::cout << std::endl << "----------------------------------------------------------------------------------" << std::endl;
 		std::cout << "CPU Cycles ===>     1   2   3   4   5   6   7   8   9   10  11  12  13  14  15  16" << std::endl;
 		print_instructs();
+		std::cout << std::endl;
 		print_regs();
 		
 		// advance cycle and counter (if needed)
