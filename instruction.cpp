@@ -48,7 +48,10 @@ instruction::instruction(std::string instr, int* r0, int* r1, std::string name)
 	dest = NULL;
 	reg0 = r0;
 	reg1 = r1;
-	k = -1;
+	if(reg1 == NULL)
+		k = 0;
+	else
+		k = -1;
 	offset = -1;
 	
 	frozen = false;

@@ -193,6 +193,10 @@ instruction pipeline::parse_instruction(std::string instr, std::string p0, std::
 	
 	if(p2.substr(0, 1) >= "a" && p2.substr(0, 1) <= "z")
 	{
+		if(p0 == "$zero")
+			return instruction(instr, r0, NULL, p2);
+		if(p1 == "$zero")
+			return instruction(instr, dest, NULL, p2);
 		return instruction(instr, dest, r0, p2);
 	}
 	else if(p2.substr(0, 1) == "$")
