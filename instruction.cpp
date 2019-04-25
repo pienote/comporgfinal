@@ -13,7 +13,7 @@ instruction::instruction(std::string instr, int* d, int* r0, int* r1)
 	reg0 = r0;
 	reg1 = r1;
 	k = -1;
-	offset = 0;
+	offset = -1;
 	
 	stage = 0;
 	stall = false;
@@ -29,7 +29,7 @@ instruction::instruction(std::string instr, int* d, int* r0, int inter)
 	reg0 = r0;
 	reg1 = NULL;
 	k = inter;
-	offset = 0;
+	offset = -1;
 	
 	stage = 0;
 	stall = false;
@@ -45,7 +45,7 @@ instruction::instruction(std::string instr, int* r0, int* r1, std::string name)
 	reg0 = r0;
 	reg1 = r1;
 	k = -1;
-	offset = 0;
+	offset = -1;
 	
 	stage = 0;
 	stall = false;
@@ -66,17 +66,29 @@ int* instruction::get_reg1()
 void instruction::set_up_columns()
 {
 	for(int i=0;i<16;i++)
-		cols[i] = ".\t";
+		cols[i] = ".";
 }
 
 void instruction::update(int cc)
 {
 	if(stage == 0)
-		offset = cc;
-	if(!stall && !is_done())
+		offset = cc;	// for the nop
+	if(!stall && stage < 6)
 		stage++;
-	if(is_done())
+	if(stage == 5)
 		write_back();
+	
+	if(stage == 1)
+		cols[cc] = "IF";
+	if(stage == 2)
+		cols[cc] = "ID";
+	if(stage == 3)
+		cols[cc] = "MEM";
+	if(stage == 4)
+		cols[cc] = "EX";
+	if(stage == 5)
+		cols[cc] = "WB";
+	
 }
 
 void instruction::write_back()
@@ -116,5 +128,10 @@ bool instruction::is_done()
 
 void instruction::print(std::string line, int curr)
 {
-	
+	std::cout << std::left << std::setw(20) << line;
+	for(int i=0;i<16;i++)
+	{
+		std::cout << std::left << std::setw(4) << cols[i];
+	}
+	std::cout << std::endl;
 }
