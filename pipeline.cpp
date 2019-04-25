@@ -99,23 +99,23 @@ void pipeline::print_regs()
 	std::cout << std::left << std::setw(6) << "$s0 = " << std::setw(14) << s[0];
 	std::cout << std::left << std::setw(6) << "$s1 = " << std::setw(14) << s[1];
 	std::cout << std::left << std::setw(6) << "$s2 = " << std::setw(14) << s[2];
-	std::cout << std::left << std::setw(6) << "$s3 = " << std::setw(14) << s[3] << std::endl;
+	std::cout << std::left << std::setw(6) << "$s3 = " << s[3] << std::endl;
 	std::cout << std::left << std::setw(6) << "$s4 = " << std::setw(14) << s[4];
 	std::cout << std::left << std::setw(6) << "$s5 = " << std::setw(14) << s[5];
 	std::cout << std::left << std::setw(6) << "$s6 = " << std::setw(14) << s[6];
-	std::cout << std::left << std::setw(6) << "$s7 = " << std::setw(14) << s[7] << std::endl;
+	std::cout << std::left << std::setw(6) << "$s7 = " << s[7] << std::endl;
 	
 	//print t registers
 	std::cout << std::left << std::setw(6) << "$t0 = " << std::setw(14) << t[0];
 	std::cout << std::left << std::setw(6) << "$t1 = " << std::setw(14) << t[1];
 	std::cout << std::left << std::setw(6) << "$t2 = " << std::setw(14) << t[2];
-	std::cout << std::left << std::setw(6) << "$t3 = " << std::setw(14) << t[3] << std::endl;
+	std::cout << std::left << std::setw(6) << "$t3 = " << t[3] << std::endl;
 	std::cout << std::left << std::setw(6) << "$t4 = " << std::setw(14) << t[4];
 	std::cout << std::left << std::setw(6) << "$t5 = " << std::setw(14) << t[5];
 	std::cout << std::left << std::setw(6) << "$t6 = " << std::setw(14) << t[6];
-	std::cout << std::left << std::setw(6) << "$t7 = " << std::setw(14) << t[7] << std::endl;
+	std::cout << std::left << std::setw(6) << "$t7 = " << t[7] << std::endl;
 	std::cout << std::left << std::setw(6) << "$t8 = " << std::setw(14) << t[8];
-	std::cout << std::left << std::setw(6) << "$t9 = " << std::setw(14) << t[9];
+	std::cout << std::left << std::setw(6) << "$t9 = " << t[9];
 }
 
 void pipeline::stop()

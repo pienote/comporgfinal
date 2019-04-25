@@ -113,9 +113,9 @@ void instruction::update(int cc)
 		if(stage == 2)
 			cols[cc] = "ID";
 		if(stage == 3)
-			cols[cc] = "MEM";
-		if(stage == 4)
 			cols[cc] = "EX";
+		if(stage == 4)
+			cols[cc] = "MEM";
 		if(stage == 5)
 			cols[cc] = "WB";
 	}
