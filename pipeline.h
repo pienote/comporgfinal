@@ -38,7 +38,7 @@ class pipeline
 		std::vector<std::string> lines;
 		std::vector<instruction> instructions;
 		std::map<std::string, int> labels;
-		std::set<instruction> stalled;
+		std::map<int*, int> stalled;
 };
 
 #endif

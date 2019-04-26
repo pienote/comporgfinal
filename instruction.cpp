@@ -14,11 +14,13 @@ instruction::instruction(std::string instr, int* d, int* r0, int* r1)
 	reg1 = r1;
 	k = -1;
 	offset = -1;
-	
+	num_stall = 0;
+		
+	nop = false;
 	frozen = false;
 	taken = false;
 	stage = 0;
-	stall = false;
+	stall = -1;
 	branch = "";
 	set_up_columns();
 }
@@ -32,11 +34,13 @@ instruction::instruction(std::string instr, int* d, int* r0, int inter)
 	reg1 = NULL;
 	k = inter;
 	offset = -1;
+	num_stall = 0;
 	
+	nop = false;
 	frozen = false;
 	taken = false;
 	stage = 0;
-	stall = false;
+	stall = -1;
 	branch = "";
 	set_up_columns();
 }
@@ -53,26 +57,28 @@ instruction::instruction(std::string instr, int* r0, int* r1, std::string name)
 	else
 		k = -1;
 	offset = -1;
+	num_stall = 0;
 	
+	nop = false;
 	frozen = false;
 	taken = false;
 	stage = 0;
-	stall = false;
+	stall = -1;
 	branch = name;
 	set_up_columns();
 }
 
-const int* instruction::get_dest()
+int* instruction::get_dest()
 {
 	return dest;
 }
 
-const int* instruction::get_reg0()
+int* instruction::get_reg0()
 {
 	return reg0;
 }
 
-const int* instruction::get_reg1()
+int* instruction::get_reg1()
 {
 	return reg1;
 }
@@ -102,7 +108,7 @@ void instruction::update(int cc)
 {
 	if(stage == 0)
 		offset = cc;	// for the nop
-	if(!stall && stage < 6)
+	if(stall == -1 && stage < 6)
 		stage++;
 	if(stage == 5)
 		write_back();
@@ -175,6 +181,11 @@ void instruction::write_back()
 	}
 }
 
+int instruction::get_stage()
+{
+	return stage;
+}
+
 bool instruction::branch_taken()
 {
 	return taken;
@@ -192,6 +203,12 @@ bool instruction::is_done()
 
 void instruction::print(std::string line, int curr)
 {
+	if(num_stall > 0 || nop)
+	{
+		nop = true;
+		for(int i=0;i<num_stall;i++)
+			print_nop(curr);	
+	}
 	std::cout << std::left << std::setw(20) << line;
 	for(int i=0;i<16;i++)
 	{
@@ -203,6 +220,59 @@ void instruction::print(std::string line, int curr)
 		else
 		{
 			std::cout << cols[i];
+		}
+	}
+	std::cout << std::endl;
+}
+
+void instruction::set_stall(int i)
+{
+	num_stall = i;
+	stall = i;
+}
+
+int instruction::get_stall()
+{
+	return stall;
+}
+
+void instruction::unstall()
+{
+	stall = -1;
+}
+
+void instruction::print_nop(int curr)
+{
+	std::cout << std::left << std::setw(20) << "nop";
+	int counter = 0;
+	for(int i=0;i<16;i++)
+	{
+		if(i < offset)
+		{
+			std::cout << std::left << std::setw(4) << ".";
+		}
+		else if(i >= offset && i < curr && counter < 3)
+		{
+			if(i - offset == 0)
+			{
+				std::cout << std::left << std::setw(4) << "IF";
+			}
+			else if(i - offset == 1)
+			{
+				std::cout << std::left << std::setw(4) << "ID";
+			}
+			else
+			{
+				std::cout << std::left << std::setw(4) << "*";
+				counter++;
+			}
+		}
+		else
+		{
+			if(i != 15)
+				std::cout << std::left << std::setw(4) << ".";
+			else
+				std::cout << ".";
 		}
 	}
 	std::cout << std::endl;

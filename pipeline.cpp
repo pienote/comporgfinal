@@ -50,7 +50,51 @@ void pipeline::loop()
 		// do updates here
 		for(unsigned int i=0;i<instructions.size()&&i<counter;i++)
 		{
+			if(!forward)
+			{
+				if(i > 0 && instructions[i - 1].get_stall() > 0)
+				{
+					instructions[i].set_stall(0);
+				}
+				else if(stalled.find(instructions[i].get_reg0()) != stalled.end() || stalled.find(instructions[i].get_reg1()) != stalled.end())
+				{
+					if(instructions[i].get_stage() == 2)
+					{
+						int max = -1;
+						if(stalled.find(instructions[i].get_reg0()) != stalled.end())
+						{
+							if(i - stalled[instructions[i].get_reg0()] == 2 && max < 1)
+								max = 1;
+							if(i - stalled[instructions[i].get_reg0()] == 1 && max < 2)
+								max = 2;
+						}
+						if(stalled.find(instructions[i].get_reg1()) != stalled.end())
+						{
+							if(i - stalled[instructions[i].get_reg1()] == 2 && max < 1)
+								max = 1;
+							if(i - stalled[instructions[i].get_reg1()] == 1 && max < 2)
+								max = 2;
+						}
+						if(max != -1)
+						{
+							instructions[i].set_stall(max);
+						}
+					}
+				}
+				else
+				{
+					instructions[i].unstall();
+				}
+			}
 			instructions[i].update(cc);
+			if(!forward)
+			{
+				stalled[instructions[i].get_dest()] = i;
+				if(instructions[i].get_stage() > 5)
+				{
+					stalled.erase(instructions[i].get_dest());
+				}
+			}
 			if(instructions[i].is_branch() && instructions[i].is_done())
 			{
 				if(instructions[i].branch_taken())
@@ -90,6 +134,7 @@ void pipeline::print_instructs()
 	for(unsigned int i=0;i<counter;i++)
 	{
 		instructions[i].print(lines[i], cc);
+		//std::cout << instructions[i].get_stall();
 	}
 }
 
