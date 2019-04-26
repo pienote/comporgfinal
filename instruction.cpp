@@ -251,7 +251,7 @@ void instruction::print_nop(int curr)
 		{
 			std::cout << std::left << std::setw(4) << ".";
 		}
-		else if(i >= offset && i < curr && counter < 3)
+		else if(i >= offset && i <= curr && counter < 3)
 		{
 			if(i - offset == 0)
 			{
